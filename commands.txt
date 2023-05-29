@@ -1,0 +1,11 @@
+python eval_linear.py --evaluate --arch vit_small --patch_size 8 --data_path /path/to/imagenet/train
+srun --partition=students-dev --gres=gpu:2 python eval_linear.py --evaluate --arch vit_small --patch_size 8
+
+
+per far funzionare tutto da ssh:
+1. entro
+2. prendo accesso alle risorse necessarie entrando in un altro terminale:
+srun --partition=students-dev --gres=gpu:1 --pty bash 
+3. attivo conda env dino38
+4. srun --partition=students-dev --gres=gpu:2 python eval_linear.py --evaluate --arch vit_small --patch_size 8
+
