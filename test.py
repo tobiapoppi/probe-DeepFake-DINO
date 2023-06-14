@@ -11,6 +11,12 @@ url_test = "/work/tesi_tpoppi/deepfake_1/coco-384-test-dict-625-{000..007}.tar"
 
 batch_size = 199999 #defined in eval_linear script
 
+def get_dataset_len(dataset):
+    i = 0
+    for x, l in dataset:
+        i += 1
+    return i
+
 def wds_deepfake_generator(dataset_instance):
     i = 0
     for sample in dataset_instance:

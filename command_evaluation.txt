@@ -1,0 +1,35 @@
+python eval_linear.py --evaluate --arch vit_small --patch_size 8 --data_path /path/to/imagenet/train
+srun --partition=students-dev --gres=gpu:2 python eval_linear.py --evaluate --arch vit_small --patch_size 8
+
+
+per far funzionare tutto da ssh:
+1. entro
+2. prendo accesso alle risorse necessarie entrando in un altro terminale:
+srun --partition=students-dev --gres=gpu:1 --pty bash 
+3. attivo conda env dino38
+4. srun --partition=students-dev --gres=gpu:2 python eval_linear.py --evaluate --arch vit_small --patch_size 8
+
+
+
+
+(dino38) tpoppi@aimagelab-srv-00:~$ export MASTER_PORT=8777
+(dino38) tpoppi@aimagelab-srv-00:~$ export MASTER_ADDR=localhost
+(dino38) tpoppi@aimagelab-srv-00:~$ export WORLD_SIZE=1
+(dino38) tpoppi@aimagelab-srv-00:~$ export RANK=0
+(dino38) tpoppi@aimagelab-srv-00:~$ python eval_linear_deepfake.py --arch vit_small --patch_size 8
+python: can't open file 'eval_linear_deepfake.py': [Errno 2] No such file or directory
+(dino38) tpoppi@aimagelab-srv-00:~$ cd probe_fake_embeddings/dino/
+(dino38) tpoppi@aimagelab-srv-00:~/probe_fake_embeddings/dino$ python eval_linear_deepfake.py --arch vit_small --patch_size 8
+Traceback (most recent call last):
+  File "eval_linear_deepfake.py", line 349, in <module>
+    eval_linear(args)
+  File "eval_linear_deepfake.py", line 61, in eval_linear
+    utils.init_distributed_mode(args)
+  File "/mnt/beegfs/homes/tpoppi/probe_fake_embeddings/dino/utils.py", line 472, in init_distributed_mode
+    args.gpu = int(os.environ['LOCAL_RANK'])
+  File "/homes/tpoppi/.conda/envs/dino38/lib/python3.8/os.py", line 675, in __getitem__
+    raise KeyError(key) from None
+KeyError: 'LOCAL_RANK'
+(dino38) tpoppi@aimagelab-srv-00:~/probe_fake_embeddings/dino$ export LOCAL_RANK=0
+(dino38) tpoppi@aimagelab-srv-00:~/probe_fake_embeddings/dino$ python eval_linear_deepfake.py --arch vit_small --patch_size 8
+
