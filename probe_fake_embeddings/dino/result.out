@@ -1,0 +1,33 @@
+8777
+localhost
+1
+0
+0
+| distributed init (rank 0): env://
+git:
+  sha: 7c446df5b9f45747937fb0d72314eb9f7b66930a, status: has uncommited changes, branch: main
+
+arch: vit_small
+avgpool_patchtokens: False
+batch_size_per_gpu: 128
+checkpoint_key: teacher
+data_path: /path/to/imagenet/
+debug: False
+dist_url: env://
+epochs: 105
+evaluate: False
+gpu: 0
+local_rank: 0
+lr: 0.001
+n_last_blocks: 4
+num_labels: 1
+num_workers: 2
+output_dir: .
+patch_size: 8
+pretrained_weights: 
+rank: 0
+val_freq: 1
+world_size: 1
+Please use the `--pretrained_weights` argument to indicate the path of the checkpoint to evaluate.
+Since no pretrained weights have been provided, we load the reference pretrained DINO weights.
+Model vit_small built.
