@@ -1,7 +1,7 @@
 import os
 import torch
 from torchvision import transforms
-
+from torchvision.utils import save_image
 
 def get_transforms_vals(dict):
 

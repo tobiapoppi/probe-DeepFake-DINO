@@ -27,10 +27,10 @@ import validation_transforms
 
 import utils
 import vision_transformer as vits
-
 import visdom as vis
-
 import webdataset as wds
+from torchvision.utils import save_image
+
 
 def get_dataset_len(dataset):
     i = 0
@@ -127,7 +127,6 @@ def eval_linear(args):
         test_stats = validate_network(val_loader, model, linear_classifier, args.n_last_blocks, args.avgpool_patchtokens)
         print(f"Accuracy of the network on the {len(dataset_val)} test images: {test_stats['acc1']:.1f}%")
 
-
         if args.transforms:
             dict_transforms = {"rot": [5, 10, 30],
                                "bright": [.2, .5, .8],
@@ -151,7 +150,7 @@ def eval_linear(args):
                 transform_val_loader = wds.WebLoader(transform_dataset_val, batch_size=batch_size, shuffle=False, num_workers=2)
                 transform_val_loader = transform_val_loader.with_length(len(dataset_val))
                 
-                test_stats = validate_network(transform_val_loader, model, linear_classifier, args.n_last_blocks, args.avgpool_patchtokens)
+                test_stats = validate_network(transform_val_loader, model, linear_classifier, args.n_last_blocks, args.avgpool_patchtokens, True, k)
                 print(f"Accuracy of the network on the {k} validation transform: {test_stats['acc1']:.1f}%")
 
         return
@@ -274,10 +273,11 @@ def train(model, linear_classifier, optimizer, loader, epoch, n, avgpool):
 
 
 @torch.no_grad()
-def validate_network(val_loader, model, linear_classifier, n, avgpool):
+def validate_network(val_loader, model, linear_classifier, n, avgpool, save_imgs = False, transf_type=None):
     linear_classifier.eval()
     metric_logger = utils.MetricLogger(delimiter="  ")
     header = 'Test:'
+    c = 0
     for inp, target in metric_logger.log_every(val_loader, 20, header):
         # move to gpu
         inp = inp.cuda(non_blocking=True)
@@ -296,6 +296,18 @@ def validate_network(val_loader, model, linear_classifier, n, avgpool):
                 
         output = linear_classifier(output)
         
+        if save_imgs==True:
+            c += 1
+            #save 1 image for each batch size
+            if (c % 1) == 0:
+                im = inp[17, :, :, :]
+                im = pth_transforms.ToPILImage()
+                save_image(im, os.path.join("/homes/tpoppi/probe-DeepFake-DINO/checkpoints/first_full_training/imgs", 'img_{}__{}.png'.format(transf_type), str(c)))
+                with open(os.path.join("/homes/tpoppi/probe-DeepFake-DINO/checkpoints/first_full_training/imgs", 'img_{}__{}_target.png'.format(transf_type), str(c)), 'w') as f:
+                    f.write(str(target[17,:]))
+                with open(os.path.join("/homes/tpoppi/probe-DeepFake-DINO/checkpoints/first_full_training/imgs", 'img_{}__{}_pred.png'.format(transf_type), str(c)), 'w') as f:
+                    f.write(str(output[17,:]))
+                    
         loss = nn.BCELoss()(output, target)
 
         if linear_classifier.module.num_labels >= 5:
