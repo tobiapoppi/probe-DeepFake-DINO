@@ -15,7 +15,12 @@
                     "WORLD_SIZE":"1",
                     "RANK":"0",
                     "LOCAL_RANK": "0"},
-            "args": ["--arch", "vit_small", "--patch_size", "8"],
+            "args": ["--arch", "vit_small",
+                    "--patch_size", "8",
+                    "--debug",
+                    "--evaluate",
+                    "--transforms_pipeline",
+                    "--output_dir", "/homes/tpoppi/probe-DeepFake-DINO/checkpoints/first_full_training/"],
             "justMyCode": true
         }
     ]

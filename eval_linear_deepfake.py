@@ -23,6 +23,7 @@ import torch.backends.cudnn as cudnn
 from torchvision import datasets
 from torchvision import transforms as pth_transforms
 from torchvision import models as torchvision_models
+import validation_transforms
 
 import utils
 import vision_transformer as vits
@@ -119,12 +120,40 @@ def eval_linear(args):
             dataset_val, batch_size=batch_size, shuffle=False, num_workers=2,
     )
 
-    val_loader = val_loader.with_length(get_dataset_len(dataset_val))
+    val_loader = val_loader.with_length(len(dataset_val))
 
     if args.evaluate:
         utils.load_custom_linear_weights(linear_classifier, os.path.join(args.output_dir, "checkpoint.pth.tar"))
         test_stats = validate_network(val_loader, model, linear_classifier, args.n_last_blocks, args.avgpool_patchtokens)
         print(f"Accuracy of the network on the {len(dataset_val)} test images: {test_stats['acc1']:.1f}%")
+
+
+        if args.transforms:
+            dict_transforms = {"rot": [5, 10, 30],
+                               "bright": [.2, .5, .8],
+                               "contrast": [.2, .5, .8],
+                               "sat": [.2, .5, .8],
+                               "hue": [.2],
+                               "bcsh": [[.2,.2,.2,0], [.5,.5,0,0], [.5,.5,.2,.2]],
+                               "posterize": [6, 4, 2]}
+            
+            transformations_list = validation_transforms.get_transforms_vals(dict_transforms)
+
+            for k, v in transformations_list.items():
+                transform_dataset_val = (wds.WebDataset(url_test).decode('pil')
+                                    .compose(wds_deepfake_generator)
+                                    .to_tuple('jpg', 'cls')
+                                    .map_tuple(v, lambda x:x)
+                                    .shuffle(1000))
+                
+                transform_dataset_val = transform_dataset_val.with_length(len(dataset_val))
+
+                transform_val_loader = wds.WebLoader(transform_dataset_val, batch_size=batch_size, shuffle=False, num_workers=2)
+                transform_val_loader = transform_val_loader.with_length(len(dataset_val))
+                
+                test_stats = validate_network(transform_val_loader, model, linear_classifier, args.n_last_blocks, args.avgpool_patchtokens)
+                print(f"Accuracy of the network on the {k} validation transform: {test_stats['acc1']:.1f}%")
+
         return
 
     train_transform = pth_transforms.Compose([
@@ -147,15 +176,7 @@ def eval_linear(args):
     train_loader = wds.WebLoader(
             dataset_train, batch_size=batch_size, shuffle=False, num_workers=2,)
 
-    train_loader = train_loader.with_length(get_dataset_len(dataset_train))
-
-    """train_loader = wds.WebLoader(
-        dataset_train,
-        sampler=sampler,
-        batch_size=args.batch_size_per_gpu,
-        num_workers=args.num_workers,
-        pin_memory=True,
-    )"""
+    train_loader = train_loader.with_length(len(dataset_train))
 
     print(f"Data loaded with {len(dataset_train)} train and {len(dataset_val)} val imgs.")
 
@@ -345,5 +366,7 @@ if __name__ == '__main__':
     parser.add_argument('--num_labels', default=1, type=int, help='Number of labels for linear classifier')
     parser.add_argument('--evaluate', dest='evaluate', action='store_true', help='evaluate model on validation set')
     parser.add_argument('--debug', dest='debug', action='store_true', help='run in debug mode (smaller dataset and faster)')
+    parser.add_argument('--transforms_pipeline', dest='transforms', action='store_true', help="""set up an evaluation
+        pipeline which tests validation set on several different transformations.""")
     args = parser.parse_args()
     eval_linear(args)
