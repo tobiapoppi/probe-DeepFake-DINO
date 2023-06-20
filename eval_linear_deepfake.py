@@ -115,14 +115,6 @@ def eval_linear(args):
 
     dataset_val = dataset_val.with_length(get_dataset_len(dataset_val))
 
-    # dataset_val = (wds.WebDataset(url_val).decode('pil')
-    #                .compose(wds_deepfake_generator)
-    #                .to_tuple('jpg', 'cls')
-    #                .map_tuple(pth_transforms.ToTensor(), lambda x:x)
-    #                .map_tuple(transforms.Resize((384, 384)), lambda x:x)
-    #                .shuffle(100))
-    #                #.batched(batch_size))
-
     val_loader = wds.WebLoader(
             dataset_val, batch_size=batch_size, shuffle=False, num_workers=2,
     )
@@ -130,7 +122,7 @@ def eval_linear(args):
     val_loader = val_loader.with_length(get_dataset_len(dataset_val))
 
     if args.evaluate:
-        utils.load_pretrained_linear_weights(linear_classifier, args.arch, args.patch_size)
+        utils.load_custom_linear_weights(linear_classifier, os.path.join(args.output_dir, "checkpoint.pth.tar"))
         test_stats = validate_network(val_loader, model, linear_classifier, args.n_last_blocks, args.avgpool_patchtokens)
         print(f"Accuracy of the network on the {len(dataset_val)} test images: {test_stats['acc1']:.1f}%")
         return
@@ -152,7 +144,6 @@ def eval_linear(args):
 
     dataset_train = dataset_train.with_length(get_dataset_len(dataset_train))
 
-    #sampler = torch.utils.data.distributed.DistributedSampler(dataset_train)
     train_loader = wds.WebLoader(
             dataset_train, batch_size=batch_size, shuffle=False, num_workers=2,)
 
@@ -190,7 +181,6 @@ def eval_linear(args):
     best_acc = to_restore["best_acc"]
 
     for epoch in range(start_epoch, args.epochs):
-        #train_loader.sampler.set_epoch(epoch)
 
         train_stats = train(model, linear_classifier, optimizer, train_loader, epoch, args.n_last_blocks, args.avgpool_patchtokens)
         scheduler.step()

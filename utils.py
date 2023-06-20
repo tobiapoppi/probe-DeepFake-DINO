@@ -129,6 +129,27 @@ def load_pretrained_linear_weights(linear_classifier, model_name, patch_size):
         print("We use random linear weights.")
 
 
+def load_custom_linear_weights(linear_classifier, ckp_path):
+    """
+    Start evaluating from existing linear trained model
+    """
+    if not os.path.isfile(ckp_path):
+        return
+    print("Found checkpoints at {}".format(ckp_path))
+
+    # open checkpoint file
+    checkpoint_state_dict = torch.load(ckp_path, map_location="cpu")["state_dict"]
+    try:
+        msg = linear_classifier.load_state_dict(checkpoint_state_dict, strict=False)
+        print("=> loaded state_dict from checkpoint '{}' with msg {}".format(ckp_path, msg))
+    except TypeError:
+        try:
+            msg = linear_classifier.load_state_dict(checkpoint_state_dict)
+            print("=> loaded state_dict from checkpoint: '{}'".format(ckp_path))
+        except ValueError:
+            print("=> failed to load state_dict from checkpoint: '{}'".format(ckp_path))
+
+
 def clip_gradients(model, clip):
     norms = []
     for name, p in model.named_parameters():
