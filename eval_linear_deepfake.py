@@ -150,7 +150,7 @@ def eval_linear(args):
                 transform_val_loader = wds.WebLoader(transform_dataset_val, batch_size=batch_size, shuffle=False, num_workers=2)
                 transform_val_loader = transform_val_loader.with_length(len(dataset_val))
                 
-                test_stats = validate_network(transform_val_loader, model, linear_classifier, args.n_last_blocks, args.avgpool_patchtokens, True, k)
+                test_stats = validate_network(transform_val_loader, model, linear_classifier, args.n_last_blocks, args.avgpool_patchtokens, True, k, args.output_dir)
                 print(f"Accuracy of the network on the {k} validation transform: {test_stats['acc1']:.1f}%")
 
         return
@@ -273,11 +273,20 @@ def train(model, linear_classifier, optimizer, loader, epoch, n, avgpool):
 
 
 @torch.no_grad()
-def validate_network(val_loader, model, linear_classifier, n, avgpool, save_imgs = False, transf_type=None):
+def validate_network(val_loader, model, linear_classifier, n, avgpool, save_imgs = False, transf_type=None, out_dir=None):
     linear_classifier.eval()
     metric_logger = utils.MetricLogger(delimiter="  ")
     header = 'Test:'
     c = 0
+    im_dir = ""
+
+    if save_imgs:
+        if not os.path.exists(out_dir):
+            os.mkdir(out_dir)
+        im_dir = os.path.join(out_dir, "imgs")
+        if not os.path.exists(im_dir):
+            os.mkdir(im_dir)
+
     for inp, target in metric_logger.log_every(val_loader, 20, header):
         # move to gpu
         inp = inp.cuda(non_blocking=True)
@@ -297,16 +306,14 @@ def validate_network(val_loader, model, linear_classifier, n, avgpool, save_imgs
         output = linear_classifier(output)
         
         if save_imgs==True:
-            c += 1
             #save 1 image for each batch size
-            if (c % 1) == 0:
-                im = inp[17, :, :, :]
-                im = pth_transforms.ToPILImage()
-                save_image(im, os.path.join("/homes/tpoppi/probe-DeepFake-DINO/checkpoints/first_full_training/imgs", 'img_{}__{}.png'.format(transf_type), str(c)))
-                with open(os.path.join("/homes/tpoppi/probe-DeepFake-DINO/checkpoints/first_full_training/imgs", 'img_{}__{}_target.png'.format(transf_type), str(c)), 'w') as f:
-                    f.write(str(target[17,:]))
-                with open(os.path.join("/homes/tpoppi/probe-DeepFake-DINO/checkpoints/first_full_training/imgs", 'img_{}__{}_pred.png'.format(transf_type), str(c)), 'w') as f:
-                    f.write(str(output[17,:]))
+            im = inp[17, :, :, :]
+            save_image(im, os.path.join(im_dir, "img_{}__{}.png".format(transf_type, str(c))))
+            with open(os.path.join(im_dir, 'img_{}__{}_target.txt'.format(transf_type, str(c))), 'w') as f:
+                f.write(str(target[17,:]))
+            with open(os.path.join(im_dir, 'img_{}__{}_pred.txt'.format(transf_type, str(c))), 'w') as f:
+                f.write(str(output[17,:]))
+            c += 1
                     
         loss = nn.BCELoss()(output, target)
 
@@ -314,7 +321,6 @@ def validate_network(val_loader, model, linear_classifier, n, avgpool, save_imgs
             acc1, acc5 = utils.accuracy(output, target, topk=(1, 5))
         else:
             acc1, = utils.get_accuracy(output, target)
-            #acc1, = utils.accuracy(output, target, topk=(1,))
 
         batch_size = inp.shape[0]
         metric_logger.update(loss=loss.item())
@@ -336,15 +342,8 @@ class LinearClassifier(nn.Module):
         super(LinearClassifier, self).__init__()
         self.num_labels = num_labels
         self.linear = nn.Linear(dim, num_labels)
-        #self.linear.weight.data.normal_(mean=0.0, std=0.01)
-        #self.linear.bias.data.zero_()
 
     def forward(self, x):
-        # flatten
-        #print(x)
-        #x = x.view(x.size(0), -1)
-
-        # linear layer
         out = self.linear(x)
         out = nn.functional.sigmoid(out)
 
