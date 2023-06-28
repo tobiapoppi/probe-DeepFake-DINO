@@ -1,0 +1,142 @@
+| distributed init (rank 0): env://
+git:
+  sha: b81fa2a948d19b5850d9b58d804bf92fe4f23d67, status: clean, branch: main
+
+arch: vit_small
+avgpool_patchtokens: False
+batch_size_per_gpu: 128
+checkpoint_key: teacher
+data_path: /path/to/imagenet/
+debug: False
+dist_url: env://
+epochs: 105
+evaluate: True
+gpu: 0
+local_rank: 0
+lr: 0.001
+n_last_blocks: 4
+num_labels: 1
+num_workers: 2
+output_dir: /homes/tpoppi/probe-DeepFake-DINO/first_full_training
+patch_size: 8
+pretrained_weights: 
+rank: 0
+transforms: True
+val_freq: 1
+world_size: 1
+Please use the `--pretrained_weights` argument to indicate the path of the checkpoint to evaluate.
+Since no pretrained weights have been provided, we load the reference pretrained DINO weights.
+Model vit_small built.
+Found checkpoints at /homes/tpoppi/probe-DeepFake-DINO/first_full_training/checkpoint.pth.tar
+=> loaded state_dict from checkpoint '/homes/tpoppi/probe-DeepFake-DINO/first_full_training/checkpoint.pth.tar' with msg <All keys matched successfully>
+Test:  [   0/5000]  eta: 2 days, 3:35:15  loss: 0.042162 (0.042162)  acc1: 97.656250 (97.656250)  time: 37.143135  data: 23.328140  max mem: 4958
+Test:  [  20/5000]  eta: 11:38:18  loss: 0.075098 (0.070931)  acc1: 97.656250 (97.805060)  time: 6.976809  data: 1.656015  max mem: 5547
+Test: Total time: 0:04:35 (0.055016 s / it)
+* Acc@1 97.800 loss 0.069
+Accuracy of the network on the 5000 test images: 97.8%
+Test:  [   0/5000]  eta: 1 day, 14:02:47  loss: 0.108086 (0.108086)  acc1: 96.875000 (96.875000)  time: 27.393410  data: 21.787333  max mem: 5547
+Test:  [  20/5000]  eta: 12:09:20  loss: 0.044529 (0.072056)  acc1: 97.656250 (97.805060)  time: 7.856898  data: 2.471811  max mem: 5617
+Test: Total time: 0:04:41 (0.056227 s / it)
+* Acc@1 97.800 loss 0.070
+Accuracy of the network on the base validation transform: 97.8%
+Test:  [   0/5000]  eta: 1 day, 19:02:35  loss: 0.098105 (0.098105)  acc1: 96.875000 (96.875000)  time: 30.991146  data: 25.484831  max mem: 5617
+Test:  [  20/5000]  eta: 13:41:41  loss: 0.112915 (0.123945)  acc1: 95.312500 (95.498512)  time: 8.845263  data: 3.438897  max mem: 5617
+Test: Total time: 0:05:05 (0.061125 s / it)
+* Acc@1 95.680 loss 0.118
+Accuracy of the network on the rot_5 validation transform: 95.7%
+Test:  [   0/5000]  eta: 1 day, 20:19:43  loss: 0.253816 (0.253816)  acc1: 93.750000 (93.750000)  time: 31.916658  data: 26.357197  max mem: 5617
+Test:  [  20/5000]  eta: 14:52:30  loss: 0.132609 (0.145728)  acc1: 93.750000 (94.531250)  time: 9.694957  data: 4.303110  max mem: 5617
+Test: Total time: 0:05:23 (0.064607 s / it)
+* Acc@1 94.700 loss 0.142
+Accuracy of the network on the rot_10 validation transform: 94.7%
+Test:  [   0/5000]  eta: 1 day, 19:59:40  loss: 0.255035 (0.255035)  acc1: 91.406250 (91.406250)  time: 31.676128  data: 26.225876  max mem: 5617
+Test:  [  20/5000]  eta: 12:25:50  loss: 0.137856 (0.147855)  acc1: 94.531250 (94.494048)  time: 7.851624  data: 2.470097  max mem: 5617
+Test: Total time: 0:04:45 (0.057071 s / it)
+* Acc@1 94.160 loss 0.155
+Accuracy of the network on the rot_30 validation transform: 94.2%
+Test:  [   0/5000]  eta: 1 day, 17:40:33  loss: 0.061462 (0.061462)  acc1: 96.093750 (96.093750)  time: 30.006653  data: 24.538696  max mem: 5617
+Test:  [  20/5000]  eta: 12:26:01  loss: 0.089260 (0.080524)  acc1: 97.656250 (97.581845)  time: 7.937413  data: 2.564977  max mem: 5617
+Test: Total time: 0:04:45 (0.057049 s / it)
+* Acc@1 97.660 loss 0.073
+Accuracy of the network on the bright_0.2 validation transform: 97.7%
+Test:  [   0/5000]  eta: 1 day, 11:20:47  loss: 0.145706 (0.145706)  acc1: 95.312500 (95.312500)  time: 25.449480  data: 19.979576  max mem: 5617
+Test:  [  20/5000]  eta: 13:05:21  loss: 0.074035 (0.085694)  acc1: 97.656250 (97.098214)  time: 8.662691  data: 3.282792  max mem: 5617
+Test: Total time: 0:04:55 (0.059039 s / it)
+* Acc@1 97.240 loss 0.079
+Accuracy of the network on the bright_0.5 validation transform: 97.2%
+Test:  [   0/5000]  eta: 2 days, 0:45:16  loss: 0.219417 (0.219417)  acc1: 92.187500 (92.187500)  time: 35.103271  data: 29.600203  max mem: 5617
+Test:  [  20/5000]  eta: 13:29:40  loss: 0.071689 (0.091040)  acc1: 97.656250 (96.726190)  time: 8.487741  data: 3.107963  max mem: 5617
+Test: Total time: 0:05:01 (0.060255 s / it)
+* Acc@1 96.400 loss 0.101
+Accuracy of the network on the bright_0.8 validation transform: 96.4%
+Test:  [   0/5000]  eta: 1 day, 13:40:41  loss: 0.052440 (0.052440)  acc1: 96.093750 (96.093750)  time: 27.128231  data: 21.643806  max mem: 5617
+Test:  [  20/5000]  eta: 11:14:43  loss: 0.056497 (0.067366)  acc1: 97.656250 (97.693452)  time: 7.179369  data: 1.804243  max mem: 5617
+Test: Total time: 0:04:27 (0.053449 s / it)
+* Acc@1 97.620 loss 0.072
+Accuracy of the network on the contrast_0.2 validation transform: 97.6%
+Test:  [   0/5000]  eta: 1 day, 15:32:59  loss: 0.101804 (0.101804)  acc1: 96.875000 (96.875000)  time: 28.475943  data: 22.975492  max mem: 5617
+Test:  [  20/5000]  eta: 12:51:19  loss: 0.056904 (0.072344)  acc1: 97.656250 (97.693452)  time: 8.333827  data: 2.964176  max mem: 5617
+Test: Total time: 0:04:51 (0.058312 s / it)
+* Acc@1 97.540 loss 0.075
+Accuracy of the network on the contrast_0.5 validation transform: 97.5%
+Test:  [   0/5000]  eta: 1 day, 14:59:45  loss: 0.123716 (0.123716)  acc1: 96.093750 (96.093750)  time: 28.077137  data: 22.573387  max mem: 5617
+Test:  [  20/5000]  eta: 11:55:01  loss: 0.076861 (0.091743)  acc1: 96.875000 (96.651786)  time: 7.641665  data: 2.255954  max mem: 5617
+Test: Total time: 0:04:37 (0.055478 s / it)
+* Acc@1 96.780 loss 0.090
+Accuracy of the network on the contrast_0.8 validation transform: 96.8%
+Test:  [   0/5000]  eta: 1 day, 15:13:01  loss: 0.082754 (0.082754)  acc1: 96.875000 (96.875000)  time: 28.236202  data: 22.766783  max mem: 5617
+Test:  [   0/5000]  eta: 1 day, 8:47:56  loss: 0.113661 (0.113661)  acc1: 96.093750 (96.093750)  time: 23.615374  data: 18.237631  max mem: 5617
+Test:  [  20/5000]  eta: 10:42:10  loss: 0.062202 (0.074029)  acc1: 97.656250 (97.805060)  time: 6.943172  data: 1.645453  max mem: 5617
+Test: Total time: 0:04:17 (0.051588 s / it)
+* Acc@1 97.640 loss 0.071
+Accuracy of the network on the sat_0.2 validation transform: 97.6%
+Test:  [   0/5000]  eta: 1 day, 10:57:36  loss: 0.162761 (0.162761)  acc1: 94.531250 (94.531250)  time: 25.171301  data: 19.781775  max mem: 5617
+Test:  [  20/5000]  eta: 10:48:23  loss: 0.063972 (0.074914)  acc1: 97.656250 (97.284226)  time: 6.944021  data: 1.645538  max mem: 5617
+Test: Total time: 0:04:19 (0.051878 s / it)
+* Acc@1 97.300 loss 0.078
+Accuracy of the network on the sat_0.5 validation transform: 97.3%
+Test:  [   0/5000]  eta: 1 day, 8:57:13  loss: 0.207664 (0.207664)  acc1: 93.750000 (93.750000)  time: 23.726685  data: 18.334257  max mem: 5617
+Test:  [  20/5000]  eta: 11:00:11  loss: 0.090470 (0.101808)  acc1: 96.875000 (96.428571)  time: 7.165393  data: 1.881221  max mem: 5617
+Test: Total time: 0:04:22 (0.052465 s / it)
+* Acc@1 96.340 loss 0.102
+Accuracy of the network on the sat_0.8 validation transform: 96.3%
+Test:  [   0/5000]  eta: 1 day, 10:12:08  loss: 0.069687 (0.069687)  acc1: 96.875000 (96.875000)  time: 24.625700  data: 19.239048  max mem: 5617
+Test:  [  20/5000]  eta: 11:11:10  loss: 0.074939 (0.082575)  acc1: 96.875000 (97.061012)  time: 7.259422  data: 1.954743  max mem: 5617
+Test: Total time: 0:04:25 (0.053013 s / it)
+* Acc@1 97.260 loss 0.078
+Accuracy of the network on the hue_0.2 validation transform: 97.3%
+Test:  [   0/5000]  eta: 1 day, 17:02:05  loss: 0.141169 (0.141169)  acc1: 96.093750 (96.093750)  time: 29.545094  data: 24.177929  max mem: 5617
+Test:  [  20/5000]  eta: 11:29:51  loss: 0.057780 (0.076701)  acc1: 97.656250 (97.581845)  time: 7.249916  data: 1.957241  max mem: 5617
+Test: Total time: 0:04:29 (0.053979 s / it)
+* Acc@1 97.480 loss 0.078
+Accuracy of the network on the bcsh_0.2_0.2_0.2_0 validation transform: 97.5%
+Test:  [   0/5000]  eta: 1 day, 15:56:34  loss: 0.131086 (0.131086)  acc1: 94.531250 (94.531250)  time: 28.758858  data: 23.359234  max mem: 5617
+Test:  [  20/5000]  eta: 11:56:33  loss: 0.075151 (0.083263)  acc1: 96.875000 (97.172619)  time: 7.626936  data: 2.329116  max mem: 5617
+Test: Total time: 0:04:36 (0.055339 s / it)
+* Acc@1 96.840 loss 0.088
+Accuracy of the network on the bcsh_0.5_0.5_0_0 validation transform: 96.8%
+Test:  [   0/5000]  eta: 1 day, 20:32:19  loss: 0.142053 (0.142053)  acc1: 96.093750 (96.093750)  time: 32.067997  data: 26.688770  max mem: 5617
+Test:  [  20/5000]  eta: 14:42:46  loss: 0.084875 (0.100865)  acc1: 96.875000 (96.168155)  time: 9.564247  data: 4.267601  max mem: 5617
+Test: Total time: 0:05:24 (0.064973 s / it)
+* Acc@1 96.400 loss 0.097
+Accuracy of the network on the bcsh_0.5_0.5_0.2_0.2 validation transform: 96.4%
+Test:  [   0/5000]  eta: 1 day, 16:37:23  loss: 0.715812 (0.715812)  acc1: 81.250000 (81.250000)  time: 29.248756  data: 23.979790  max mem: 5617
+Test:  [  20/5000]  eta: 12:48:04  loss: 0.610621 (0.613249)  acc1: 81.250000 (81.250000)  time: 8.254104  data: 2.955802  max mem: 5617
+Test: Total time: 0:04:49 (0.057919 s / it)
+* Acc@1 82.020 loss 0.586
+Accuracy of the network on the posterize_ validation transform: 82.0%
+Test:  [   0/5000]  eta: 1 day, 14:29:40  loss: 0.168278 (0.168278)  acc1: 96.093750 (96.093750)  time: 27.716196  data: 21.950392  max mem: 5617
+Test:  [  20/5000]  eta: 11:59:05  loss: 0.088677 (0.099530)  acc1: 96.875000 (97.061012)  time: 7.711234  data: 1.968002  max mem: 5617
+Test: Total time: 0:04:46 (0.057254 s / it)
+* Acc@1 97.160 loss 0.087
+Accuracy of the network on the posterize_6 validation transform: 97.2%
+Test:  [   0/5000]  eta: 1 day, 14:17:26  loss: 0.355734 (0.355734)  acc1: 87.500000 (87.500000)  time: 27.569359  data: 21.793325  max mem: 5617
+Test:  [  20/5000]  eta: 12:25:12  loss: 0.242543 (0.279891)  acc1: 90.625000 (90.662202)  time: 8.048776  data: 2.307895  max mem: 5617
+Test: Total time: 0:04:52 (0.058537 s / it)
+* Acc@1 90.960 loss 0.271
+Accuracy of the network on the posterize_4 validation transform: 91.0%
+Test:  [   0/5000]  eta: 1 day, 14:19:27  loss: 0.634544 (0.634544)  acc1: 81.250000 (81.250000)  time: 27.593596  data: 21.815479  max mem: 5617
+Test:  [  20/5000]  eta: 11:44:11  loss: 0.577397 (0.610812)  acc1: 80.468750 (81.212798)  time: 7.528717  data: 1.786559  max mem: 5617
+Test: Total time: 0:04:42 (0.056469 s / it)
+* Acc@1 81.520 loss 0.595
+Accuracy of the network on the posterize_2 validation transform: 81.5%

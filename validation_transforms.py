@@ -70,7 +70,7 @@ def get_transforms_vals(dict):
                     ])
         elif k == 'posterize':
             for p in v:
-                tr_list["posterize_".format(p)] = transforms.Compose([
+                tr_list["posterize_{}".format(p)] = transforms.Compose([
                         transforms.Resize(256, interpolation=3),
                         transforms.CenterCrop(224),
                         transforms.RandomPosterize(bits=p),

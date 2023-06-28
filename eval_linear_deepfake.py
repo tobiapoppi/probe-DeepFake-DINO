@@ -128,14 +128,14 @@ def eval_linear(args):
         print(f"Accuracy of the network on the {len(dataset_val)} test images: {test_stats['acc1']:.1f}%")
 
         if args.transforms:
-            dict_transforms = {"rot": [5, 10, 30],
-                               "bright": [.2, .5, .8],
-                               "contrast": [.2, .5, .8],
-                               "sat": [.2, .5, .8],
-                               "hue": [.2],
-                               "bcsh": [[.2,.2,.2,0], [.5,.5,0,0], [.5,.5,.2,.2]],
-                               "posterize": [6, 4, 2]}
-            
+            #dict_transforms = {"rot": [5, 10, 30],
+            #                   "bright": [.2, .5, .8],
+            #                   "contrast": [.2, .5, .8],
+            #                   "sat": [.2, .5, .8],
+            #                   "hue": [.2],
+            #                   "bcsh": [[.2,.2,.2,0], [.5,.5,0,0], [.5,.5,.2,.2]],
+            #                   "posterize": [6, 4, 2]}
+            dict_transforms = {"posterize": [6, 4, 2]}
             transformations_list = validation_transforms.get_transforms_vals(dict_transforms)
 
             for k, v in transformations_list.items():
