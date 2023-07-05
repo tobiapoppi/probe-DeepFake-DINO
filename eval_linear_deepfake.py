@@ -39,7 +39,7 @@ def get_dataset_len(dataset):
     return i
 
 
-def wds_deepfake_generator(dataset_instance):
+def wds_deepfake_generator_jpg(dataset_instance):
     i = 0
     for sample in dataset_instance:
         del sample['json']
@@ -57,6 +57,23 @@ def wds_deepfake_generator(dataset_instance):
         i += 1
         yield sample
 
+def wds_deepfake_generator_png(dataset_instance):
+    i = 0
+    for sample in dataset_instance:
+        del sample['json']
+        del sample['fake_1.jpg']
+        del sample['fake_2.jpg']
+        del sample['fake_3.jpg']
+        del sample['fake_4.jpg']
+        if i % 2 == 0:
+            del sample['fake_0.jpg']
+            sample['cls'] = torch.tensor([0], dtype=torch.float32)
+        else:
+            sample['jpg'] = sample['fake_0.jpg']
+            del sample['fake_0.jpg']
+            sample['cls'] = torch.tensor([1], dtype=torch.float32)
+        i += 1
+        yield sample
 
 def eval_linear(args):
     utils.init_distributed_mode(args)
@@ -99,17 +116,25 @@ def eval_linear(args):
         pth_transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
     ])
 
-    url_val = "/work/tesi_tpoppi/deepfake_1/coco-384-validation-dict-625-{000..007}.tar"
-    url_test = "/work/tesi_tpoppi/deepfake_1/coco-384-test-dict-625-{000..007}.tar"
+    url_val = ""
+    url_test = ""
 
-    if args.debug:
-        url_val = "/work/tesi_tpoppi/deepfake_1/coco-384-validation-dict-625-000.tar"
-        url_test = "/work/tesi_tpoppi/deepfake_1/coco-384-test-dict-625-000.tar"
+    if args.format == "jpg":
+        url_val = "/work/tesi_tpoppi/deepfake_1/coco-384-validation-dict-625-{000..007}.tar"
+        url_test = "/work/tesi_tpoppi/deepfake_1/coco-384-test-dict-625-{000..007}.tar"
+        if args.debug:
+            url_val = "/work/tesi_tpoppi/deepfake_1/coco-384-validation-dict-625-000.tar"
+            url_test = "/work/tesi_tpoppi/deepfake_1/coco-384-test-dict-625-000.tar"
+
+    if args.format == "png":
+        png_dataset_path = "/mnt/beegfs/work/publicfiles/drive/elsa_dataset/version_1/media_analytics_challenge/ELSA/dataset/fake-images"
+
+
 
     batch_size = args.batch_size_per_gpu #defined in eval_linear script
 
     dataset_val = (wds.WebDataset(url_test).decode('pil')
-                   .compose(wds_deepfake_generator)
+                   .compose(wds_deepfake_generator_jpg)
                    .to_tuple('jpg', 'cls')
                    .map_tuple(val_transform, lambda x:x)
                    .shuffle(1000))
@@ -140,7 +165,7 @@ def eval_linear(args):
 
             for k, v in transformations_list.items():
                 transform_dataset_val = (wds.WebDataset(url_test).decode('pil')
-                                    .compose(wds_deepfake_generator)
+                                    .compose(wds_deepfake_generator_jpg)
                                     .to_tuple('jpg', 'cls')
                                     .map_tuple(v, lambda x:x)
                                     .shuffle(1000))
@@ -164,7 +189,7 @@ def eval_linear(args):
 
 
     dataset_train = (wds.WebDataset(url_val).decode('pil')
-                   .compose(wds_deepfake_generator)
+                   .compose(wds_deepfake_generator_jpg)
                    .to_tuple('jpg', 'cls')
                    .map_tuple(train_transform, lambda x:x)
                    .shuffle(1000, initial=1000))
@@ -379,5 +404,6 @@ if __name__ == '__main__':
     parser.add_argument('--debug', dest='debug', action='store_true', help='run in debug mode (smaller dataset and faster)')
     parser.add_argument('--transforms_pipeline', dest='transforms', action='store_true', help="""set up an evaluation
         pipeline which tests validation set on several different transformations.""")
+    parser.add_argument('--dataset_format', dest='format', default='jpg')
     args = parser.parse_args()
     eval_linear(args)

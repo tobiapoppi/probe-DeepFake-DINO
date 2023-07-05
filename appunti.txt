@@ -1,0 +1,17 @@
+dopo aver fatto il training utilizzando il dataset fake jpg presente nel codice (c'è il path) e aver ottenuto un 98% di accuracy, ho fatto la pipeline di evaluation utilizzando una serie di trasformazioni, e per ognuna delle quali ho specificato un range di parametri da effettuare la trasformazione su. Praticamente le performance calano leggermente, come previsto, ma non drasticamente (calano fino ad un massimo di 90%).
+
+a questo punto riprovo il training su png invece che su jpg (perchè hanno detto che avevano testato casualmente su immagini png e non funzionava più niente (tipo 20% di accuracy)).
+
+
+Per la creazione del dataset png, prendo 50% fake e 50% real.
+considerando un totale di 200k immagini ne prenderò 100k e 100k.
+- Quelle fake le prendo da qui, e sono 1 Milione di immagini generate da stable diffusion v2: "/mnt/beegfs/work/publicfiles/drive/elsa_dataset/version_1/media_analytics_challenge/ELSA/dataset/fake-images"
+
+- script per il download laion delle immagini real: /mnt/beegfs/work/publicfiles/drive/elsa_dataset/version_1/media_analytics_challenge/dataset_utils/laion_train_download.py
+
+
+- lista di immagini vere scaricabili: /mnt/beegfs/work/publicfiles/drive/elsa_dataset/version_1/media_analytics_challenge/dataset_utils/laion_train_real.csv
+
+- link a tutti i file parquet: https://www.kaggle.com/datasets/romainbeaumont/laion400m
+
+ora devo capire se lasciare tutti i file originari senza fare una vera e propria copia per la creazione del dataset, o se creare una copia dei file per creare il mio dataset. (meglio la prima probabilmente, facendo tutto da python manualmente)
