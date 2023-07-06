@@ -116,8 +116,10 @@ def eval_linear(args):
         pth_transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
     ])
 
-    url_val = ""
-    url_test = ""
+    global url_val
+    global url_test
+    global dataset_val
+    global val_loader
 
     if args.format == "jpg":
         url_val = "/work/tesi_tpoppi/deepfake_1/coco-384-validation-dict-625-{000..007}.tar"
@@ -125,27 +127,33 @@ def eval_linear(args):
         if args.debug:
             url_val = "/work/tesi_tpoppi/deepfake_1/coco-384-validation-dict-625-000.tar"
             url_test = "/work/tesi_tpoppi/deepfake_1/coco-384-test-dict-625-000.tar"
+        
+        batch_size = args.batch_size_per_gpu #defined in eval_linear script
 
-    if args.format == "png":
-        png_dataset_path = "/mnt/beegfs/work/publicfiles/drive/elsa_dataset/version_1/media_analytics_challenge/ELSA/dataset/fake-images"
-
-
-
-    batch_size = args.batch_size_per_gpu #defined in eval_linear script
-
-    dataset_val = (wds.WebDataset(url_test).decode('pil')
+        dataset_val = (wds.WebDataset(url_test).decode('pil')
                    .compose(wds_deepfake_generator_jpg)
                    .to_tuple('jpg', 'cls')
                    .map_tuple(val_transform, lambda x:x)
                    .shuffle(1000))
 
-    dataset_val = dataset_val.with_length(get_dataset_len(dataset_val))
+        dataset_val = dataset_val.with_length(get_dataset_len(dataset_val))
 
-    val_loader = wds.WebLoader(
-            dataset_val, batch_size=batch_size, shuffle=False, num_workers=2,
-    )
+        val_loader = wds.WebLoader(
+                dataset_val, batch_size=batch_size, shuffle=False, num_workers=2,
+        )
 
-    val_loader = val_loader.with_length(len(dataset_val))
+        val_loader = val_loader.with_length(len(dataset_val))
+
+    if args.format == "png":
+        png_dataset_path = "/work/tesi_tpoppi/dataset_png"
+        dataset_val = datasets.ImageFolder(os.path.join(png_dataset_path, "test"), transform=val_transform)
+        val_loader = torch.utils.data.DataLoader(
+            dataset_val,
+            batch_size=args.batch_size_per_gpu,
+            num_workers=args.num_workers,
+            pin_memory=True,
+        )
+
 
     if args.evaluate:
         utils.load_custom_linear_weights(linear_classifier, os.path.join(args.output_dir, "checkpoint.pth.tar"))
@@ -180,6 +188,9 @@ def eval_linear(args):
 
         return
 
+    global dataset_train
+    global train_loader
+    
     train_transform = pth_transforms.Compose([
         pth_transforms.RandomResizedCrop(224),
         pth_transforms.RandomHorizontalFlip(),
@@ -187,20 +198,28 @@ def eval_linear(args):
         pth_transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
     ])
 
+    if args.format == "jpg":
+        dataset_train = (wds.WebDataset(url_val).decode('pil')
+                    .compose(wds_deepfake_generator_jpg)
+                    .to_tuple('jpg', 'cls')
+                    .map_tuple(train_transform, lambda x:x)
+                    .shuffle(1000, initial=1000))
+        dataset_train = dataset_train.with_length(get_dataset_len(dataset_train))
 
-    dataset_train = (wds.WebDataset(url_val).decode('pil')
-                   .compose(wds_deepfake_generator_jpg)
-                   .to_tuple('jpg', 'cls')
-                   .map_tuple(train_transform, lambda x:x)
-                   .shuffle(1000, initial=1000))
-    
+        train_loader = wds.WebLoader(
+                dataset_train, batch_size=batch_size, shuffle=False, num_workers=2,)
+        train_loader = train_loader.with_length(len(dataset_train))
 
-    dataset_train = dataset_train.with_length(get_dataset_len(dataset_train))
-
-    train_loader = wds.WebLoader(
-            dataset_train, batch_size=batch_size, shuffle=False, num_workers=2,)
-
-    train_loader = train_loader.with_length(len(dataset_train))
+    elif args.format == "png":
+        dataset_train = datasets.ImageFolder(os.path.join(png_dataset_path, "train"), transform=train_transform)
+        sampler = torch.utils.data.distributed.DistributedSampler(dataset_train)
+        train_loader = torch.utils.data.DataLoader(
+            dataset_train,
+            sampler=sampler,
+            batch_size=args.batch_size_per_gpu,
+            num_workers=args.num_workers,
+            pin_memory=True,
+        )
 
     print(f"Data loaded with {len(dataset_train)} train and {len(dataset_val)} val imgs.")
 

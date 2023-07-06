@@ -26,11 +26,12 @@ def download_image(url, filename):
         content_type = response.headers['content-type']
         extension = mimetypes.guess_extension(content_type)
         # check if filename + extension is already present
-        if os.path.exists(filename + extension):
+        if extension == '.png':
+            if os.path.exists(filename + extension):
+                return True
+            with open(filename + extension, 'wb') as fo:
+                fo.write(response.content)
             return True
-        with open(filename + extension, 'wb') as fo:
-            fo.write(response.content)
-        return True
     except:
         logging.info(f'Error downloading {url}')
         return False
@@ -47,25 +48,21 @@ def download_laion_images(args, download_folder):
         for row in csv_reader:
             sample_id = float(row[0])
             url = row[1]
-            ext = url.split('.')[-1]
-            if ext == 'png':
-                if count % 100000 == 0:
-                    logging.info(f'Downloaded {count} of 1000000 images')
-                logging.debug(f'Downloading {sample_id} ...')
-
-                if count % args.images_per_folder == 0:
-                    new_id = str(counter_folder).zfill(6)
-                    current_folder = os.path.join(download_folder, f"part-{new_id}")
-                    if not os.path.exists(current_folder):
-                        os.makedirs(current_folder)
-                        logging.debug(f"Created folder: {current_folder}")
-                    counter_folder += 1
-
-                download_image(url, os.path.join(current_folder, f"{int(sample_id)}"))
-                count += 1
-                if count >= 100000:
-                    logging.info("Completed download of 100000 images")
-                    break
+            if count % 100000 == 0:
+                logging.info(f'Downloaded {count} of 1000000 images')
+            logging.debug(f'Downloading {sample_id} ...')
+            if count % args.images_per_folder == 0:
+                new_id = str(counter_folder).zfill(6)
+                current_folder = os.path.join(download_folder, f"part-{new_id}")
+                if not os.path.exists(current_folder):
+                    os.makedirs(current_folder)
+                    logging.debug(f"Created folder: {current_folder}")
+                counter_folder += 1
+            download_image(url, os.path.join(current_folder, f"{int(sample_id)}"))
+            count += 1
+            if count >= 100000:
+                logging.info("Completed download of 100000 images")
+                break
 
 
 if __name__ == "__main__":
