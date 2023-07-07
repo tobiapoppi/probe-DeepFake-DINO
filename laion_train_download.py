@@ -38,7 +38,7 @@ def download_image(url, filename):
 
 
 def download_laion_images(args, download_folder):
-    counter_folder = 0
+    counter_folder = 100
     current_folder = ""
     with open(args.path, 'r') as file:
         # Create a CSV reader
@@ -46,6 +46,9 @@ def download_laion_images(args, download_folder):
         next(csv_reader) # skip header
         count = 0
         for row in csv_reader:
+            if count <= 99999:
+                count += 1
+                continue
             sample_id = float(row[0])
             url = row[1]
             if count % 100000 == 0:
@@ -60,9 +63,8 @@ def download_laion_images(args, download_folder):
                 counter_folder += 1
             download_image(url, os.path.join(current_folder, f"{int(sample_id)}"))
             count += 1
-            if count >= 100000:
-                logging.info("Completed download of 100000 images")
-                break
+            
+        logging.info("Completed download of 100000 images")
 
 
 if __name__ == "__main__":
