@@ -11,18 +11,18 @@ fake = pathlib.Path(png_folder_fake)
 ds_fake = fake.rglob("*.png")
 ds_real = real.rglob("*.png")
 
-for i in range(100000):
+for i in range(40000):
     im = next(ds_fake)
     shutil.copyfile(im, os.path.join("/work/tesi_tpoppi/dataset_png/train/1", im.name))
 
-for i in range(20000):
+for i in range(10000):
     im = next(ds_fake)
     shutil.copyfile(im, os.path.join("/work/tesi_tpoppi/dataset_png/test/1", im.name))
 
-for i in range(100000):
+for i in range(40000):
     im = next(ds_real)
     shutil.copyfile(im, os.path.join("/work/tesi_tpoppi/dataset_png/train/0", im.name))
 
-for i in range(20000):
+for i in range(10000):
     im = next(ds_real)
     shutil.copyfile(im, os.path.join("/work/tesi_tpoppi/dataset_png/test/0", im.name))
