@@ -15,15 +15,16 @@
                     "WORLD_SIZE":"1",
                     "RANK":"0",
                     "LOCAL_RANK": "0"},
-            //"args": ["--arch", "vit_small",
-            //        "--patch_size", "8",
-            //        "--debug",
-            //        "--evaluate",
-            //        "--transforms_pipeline",
-            //        "--output_dir", "/homes/tpoppi/probe-DeepFake-DINO/checkpoints/first_full_training/"],
+            "args": ["--arch", "vit_small",
+                    "--patch_size", "8",
+                    "--debug",
+                    //"--evaluate",
+                    //"--transforms_pipeline",
+                    "--output_dir", "/homes/tpoppi/probe-DeepFake-DINO/checkpoints/debug/",
+                    "--dataset_format", "png"],
             
             //"args": ["--output_folder", "/work/tesi_tpoppi/laion_real_png_new"],
-            "args": [],
+            //"args": [],
             "justMyCode": true
         }
     ]
