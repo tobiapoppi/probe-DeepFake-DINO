@@ -203,7 +203,11 @@ def eval_linear(args):
         train_loader = train_loader.with_length(len(dataset_train))
 
     elif args.format == "png":
+        ## check validity of images
+        # dataset_train = datasets.ImageFolder(os.path.join(png_dataset_path, "train"), transform=train_transform, is_valid_file=check)
+        
         dataset_train = datasets.ImageFolder(os.path.join(png_dataset_path, "train"), transform=train_transform, is_valid_file=check)
+
         sampler = torch.utils.data.distributed.DistributedSampler(dataset_train)
         train_loader = torch.utils.data.DataLoader(
             dataset_train,
