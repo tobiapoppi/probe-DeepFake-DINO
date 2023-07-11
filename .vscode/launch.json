@@ -25,7 +25,7 @@
             
             //"args": ["--output_folder", "/work/tesi_tpoppi/laion_real_png_new"],
             //"args": [],
-            "justMyCode": true
+            "justMyCode": false
         }
     ]
 }

@@ -30,6 +30,8 @@ import vision_transformer as vits
 import visdom as vis
 import webdataset as wds
 from torchvision.utils import save_image
+from PIL import Image, ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 
 def get_dataset_len(dataset):
@@ -37,6 +39,13 @@ def get_dataset_len(dataset):
     for x, l in dataset:
         i += 1
     return i
+
+def check(im):
+    try:
+        Image.open(im)
+        return True
+    except:
+        return False
 
 def wds_deepfake_generator_jpg(dataset_instance):
     i = 0
@@ -103,6 +112,9 @@ def eval_linear(args):
     global dataset_val
     global val_loader
     png_dataset_path = "/work/tesi_tpoppi/dataset_png"
+    if args.debug:
+        png_dataset_path = "/work/tesi_tpoppi/dataset_png/debug"
+
 
     if args.format == "jpg":
         url_val = "/work/tesi_tpoppi/deepfake_1/coco-384-validation-dict-625-{000..007}.tar"
@@ -191,7 +203,7 @@ def eval_linear(args):
         train_loader = train_loader.with_length(len(dataset_train))
 
     elif args.format == "png":
-        dataset_train = datasets.ImageFolder(os.path.join(png_dataset_path, "train"), transform=train_transform)
+        dataset_train = datasets.ImageFolder(os.path.join(png_dataset_path, "train"), transform=train_transform, is_valid_file=check)
         sampler = torch.utils.data.distributed.DistributedSampler(dataset_train)
         train_loader = torch.utils.data.DataLoader(
             dataset_train,
@@ -263,6 +275,7 @@ def train(model, linear_classifier, optimizer, loader, epoch, n, avgpool):
         # move to gpu
         inp = inp.cuda(non_blocking=True)
         target = target.cuda(non_blocking=True)
+        target = torch.unsqueeze(target, dim=-1).to(torch.float32)
 
         # forward
         with torch.no_grad():
@@ -315,6 +328,7 @@ def validate_network(val_loader, model, linear_classifier, n, avgpool, save_imgs
         # move to gpu
         inp = inp.cuda(non_blocking=True)
         target = target.cuda(non_blocking=True)
+        target = torch.unsqueeze(target, dim=-1).to(torch.float32)
 
         # forward
         with torch.no_grad():
