@@ -52,6 +52,18 @@ def create():
         if check(im):
             shutil.copyfile(im, os.path.join("/work/tesi_tpoppi/dataset_png/test/1", str(count) + ".png"))
             count += 1
+    count = 0
+    while count < 28700:
+        im = next(ds_real)
+        if check(im):
+            shutil.copyfile(im, os.path.join("/work/tesi_tpoppi/dataset_png/train/0", str(count) + ".png"))
+            count += 1
+    count = 0
+    while count < 7100:
+        im = next(ds_real)
+        if check(im):
+            shutil.copyfile(im, os.path.join("/work/tesi_tpoppi/dataset_png/test/0", str(count) + ".png"))
+            count += 1
 
 def create_debug():
     
@@ -81,5 +93,5 @@ def create_debug():
             count += 1
 
 
-#create()
-create_debug()
+create()
+#create_debug()
